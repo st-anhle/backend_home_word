@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tasks;
 use App\Http\Resources\TaskCollection;
+use App\Http\Requests\TasksRequest;
 // use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,7 +41,6 @@ class TaskController extends Controller
 
 
         return new TaskCollection($tasks->get());
-
     }
 
     public function create(): Response
@@ -48,34 +48,11 @@ class TaskController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(TasksRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $validator = Validator::make($input, [
-            'title' => 'required',
-            'description' => 'required',
-            'type' => 'required',
-            'status' => 'required',
-            'start_date' => 'required',
-            'due_date' => 'required',
-            'assignee' => 'required',
-            'estimate' => 'required',
-            'actual' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => $validator->errors(),
-            ]);
-        }
-
         $task = Tasks::create($input);
-        return response()->json([
-            "success" => true,
-            "message" => "Task created successfully.",
-            "data" => $task
-        ]);
+        return new TaskCollection($task->get());
     }
 
     /**

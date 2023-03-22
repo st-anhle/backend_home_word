@@ -11,7 +11,7 @@ class TasksRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,31 @@ class TasksRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required',
+            'description' => 'required',
+            'type' => 'required',
+            'status' => 'required',
+            'start_date' => 'required',
+            'due_date' => 'required',
+            'assignee' => 'required',
+            'estimate' => 'required',
+            'actual' => 'required',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'title.required' => 'Title is required!',
+            'description.required' => 'description is required!',
+            'type.required' => 'type is required!',
+            'status.required' => 'status is required!',
+            'start_date.required' => 'start_date is required!',
+            'due_date.required' => 'due_date is required!',
+            'assignee.required' => 'assignee is required!',
+            'estimate.required' => 'estimate is required!',
+            'actual.required' => 'actual is required!',
+        ];
+    }
+
 }
