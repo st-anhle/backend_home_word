@@ -8,24 +8,23 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 // use App\Http\Resources\UserWithTaskResource;
-// use App\Repositories\UserRepositoryInterface;
+use App\Repositories\UserRepositoryInterface;
 
 
 class UserController extends Controller
 {
-    // protected $repository;
+    protected $repository;
 
-    // public function __construct(UserRepositoryInterface $repository)
-    // {
-    //     $this->repository = $repository;
-    // }
+    public function __construct(UserRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $users = User::all();
-        // $users = $this->repository->gelAllUser();
+        $users = $this->repository->gelAllUser();
         return new UserResource($users);
     }
 
@@ -46,7 +45,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
+        $user = $this->repository->getUserById($id);
         if (!$user) {
             return response()->json([
                 "success" => false,
@@ -79,6 +78,8 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::where('id', $id)->delete();
+
+        // $user = $this->repository->deleteUser($id);
         if ($user) {
             return new UserResource($user);
         } else {

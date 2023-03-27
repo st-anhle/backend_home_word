@@ -30,16 +30,18 @@ use App\Http\Resources\UserResource;
 
 
 Route::middleware([EnsureUUIDIsValid::class])->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->withoutMiddleware([EnsureUUIDIsValid::class]);
+    Route::get('/users', [UserController::class, 'index'])
+        ->withoutMiddleware([App\Http\Middleware\EnsureUUIDIsValid::class]);
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::put('users/{id}', [UserController::class, 'update']);
     Route::delete('users/{id}', [UserController::class, 'destroy']);
 
 
-    Route::get('/tasks', [TaskController::class, 'index'])->withoutMiddleware([EnsureUUIDIsValid::class]);
+    Route::get('/tasks', [TaskController::class, 'index'])
+        ->withoutMiddleware([EnsureUUIDIsValid::class]);
     Route::post('/tasks', [TaskController::class, 'store']);
-    Route::get('/tasks/{id}', [TaskContsroller::class, 'show']);
+    Route::get('/tasks/{id}', [TaskController::class, 'show']);
     Route::put('tasks/{id}', [TaskController::class, 'update']);
     Route::delete('tasks/{id}', [TaskController::class, 'destroy']);
 });

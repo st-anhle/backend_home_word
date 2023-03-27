@@ -17,13 +17,12 @@ class EnsureUUIDIsValid
     public function handle(Request $request, Closure $next): Response
     {
         $uuid = $request->uuid;
-        // dd($uuid);
-        if (!$uuid) {
-            return response('uuid not valid.', 401);
+        if ($uuid == null) {
+            return response('Valid UUID.', 401);
         }
         if (User::where('uuid', $uuid)->first()) {
             return $next($request);
         }
-        return response('uuid not right.', 401);
+        return response('Wrong UUID.', 401);
     }
 }

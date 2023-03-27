@@ -10,4 +10,14 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::all();
     }
+
+    public function deleteUser($id)
+    {
+        return User::destroy($id);
+    }
+
+    public function getUserById($id)
+    {
+        return User::findOrFail($id);
+    }
 }

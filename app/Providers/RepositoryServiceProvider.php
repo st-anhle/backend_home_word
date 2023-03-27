@@ -11,12 +11,14 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(
-            'App\Repositories\TaskRepositoryInterface',
-            'App\Repositories\TaskRepository',
-            'App\Repositories\UserRepositoryInterface',
-            'App\Repositories\UserRepository',
+        $models = array(
+            'Task',
+            'User',
         );
+
+        foreach ($models as $model) {
+            $this->app->bind("App\Repositories\\{$model}RepositoryInterface", "App\Repositories\\{$model}Repository");
+        }
     }
 
     /**
