@@ -24,9 +24,8 @@ class Tasks extends Model
         'actual',
     ];
 
-    public function post(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'foreign_key');
     }
-
 }

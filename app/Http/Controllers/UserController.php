@@ -2,51 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\Tasks;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
+// use App\Http\Resources\UserWithTaskResource;
+// use App\Repositories\UserRepositoryInterface;
 
 
 class UserController extends Controller
 {
+    // protected $repository;
+
+    // public function __construct(UserRepositoryInterface $repository)
+    // {
+    //     $this->repository = $repository;
+    // }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $users = User::all();
+        // $users = $this->repository->gelAllUser();
         return new UserResource($users);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
+        // $validated = $request->validated();
+        // $request->safe()->only(['name']);
         $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                "success" => false,
-                "message" => $validator->errors(),
-            ]);
-        }
-
         $user = User::create($input);
-        return response()->json([
-            "success" => true,
-            "message" => "User created successfully.",
-            "data" => $user
-        ]);
+        return new UserResource($user);
     }
 
     /**
@@ -60,19 +52,25 @@ class UserController extends Controller
                 "success" => false,
             ]);
         } else {
+            $tasks = Tasks::where('assignee',$id)->get();
+            // $userT =  $user->join($tasks);
             return response()->json([
-                "success" => true,
-                "data" => $user
-            ]);
+                    "user" => $user,
+                    "tasks" => $tasks
+                ]);
+            // return new UserResource($user);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): Response
+    public function update(Request $request, string $id)
     {
         //
+        $user = User::find($id);
+        $user->update($request->all());
+        return new UserResource($user);
     }
 
     /**
@@ -82,11 +80,7 @@ class UserController extends Controller
     {
         $user = User::where('id', $id)->delete();
         if ($user) {
-            return response()->json([
-                "success" => true,
-                "message" => "User retrieved successfully.",
-                "data" => $user
-            ]);
+            return new UserResource($user);
         } else {
             return response()->json([
                 "success" => false,

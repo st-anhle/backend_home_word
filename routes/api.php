@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TaskController;
+use App\Http\Middleware\EnsureUUIDIsValid;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 
@@ -22,14 +23,23 @@ use App\Http\Resources\UserResource;
 //     return $request->user();
 // });
 
-Route::apiResource('users', UserController::class);
+// Route::apiResource('users', UserController::class);
 
-Route::apiResource('tasks', TaskController::class);
+// Route::apiResource('tasks', TaskController::class);
 
-Route::get('/search/{tittle}', [TaskController::class, 'searchByTittle']);
 
-Route::get('/filter/type/{type}/status/{status}', [TaskController::class, 'filter']); 
 
-Route::get('/usertest/{id}', function ($id) {
-    return new UserResource(User::findOrFail($id));
+Route::middleware([EnsureUUIDIsValid::class])->group(function () {
+    Route::get('/users', [UserController::class, 'index'])->withoutMiddleware([EnsureUUIDIsValid::class]);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::put('users/{id}', [UserController::class, 'update']);
+    Route::delete('users/{id}', [UserController::class, 'destroy']);
+
+
+    Route::get('/tasks', [TaskController::class, 'index'])->withoutMiddleware([EnsureUUIDIsValid::class]);
+    Route::post('/tasks', [TaskController::class, 'store']);
+    Route::get('/tasks/{id}', [TaskContsroller::class, 'show']);
+    Route::put('tasks/{id}', [TaskController::class, 'update']);
+    Route::delete('tasks/{id}', [TaskController::class, 'destroy']);
 });
